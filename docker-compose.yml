@@ -1,0 +1,59 @@
+version: '3.3'
+services:
+  magento:
+    image: 'docker.io/bitnami/magento:2.3.5-debian-10-r58'
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT_NUMBER=3306
+      - MAGENTO_HOST=local.domain.com
+      - MAGENTO_DATABASE_USER=bn_magento
+      - MAGENTO_DATABASE_PASSWORD=magento_db_password
+      - MAGENTO_DATABASE_NAME=bitnami_magento
+      - MAGENTO_MODE=developer
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT_NUMBER=9200
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - 'magento_data:/bitnami'
+      - './code:/bitnami/magento/htdocs/app/code'
+      - './etc/php.ini:/opt/bitnami/php/conf/php.ini'
+    depends_on:
+      - mariadb
+      - elasticsearch
+
+  mariadb:
+    image: 'docker.io/bitnami/mariadb:10.2-debian-10'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_magento
+      - MARIADB_PASSWORD=magento_db_password
+      - MARIADB_DATABASE=bitnami_magento
+    volumes:
+      - 'mariadb_data:/bitnami'
+
+  elasticsearch:
+    image: 'docker.io/bitnami/elasticsearch:6-debian-10'
+    volumes:
+      - 'elasticsearch_data:/bitnami/elasticsearch/data'
+  phpmyadmin:
+    image: 'docker.io/bitnami/phpmyadmin:5-debian-10'
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_ROOT_USER=root
+      - PMA_ARBITRARY=1
+    ports:
+      - '8080:8080'
+    links:
+      - mariadb
+    depends_on:
+      - mariadb
+volumes:
+  elasticsearch_data:
+    driver: local
+  mariadb_data:
+    driver: local
+  magento_data:
+    driver: local
