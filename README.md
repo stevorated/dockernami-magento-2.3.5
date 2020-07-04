@@ -2,7 +2,7 @@
 
 ## Main Functionalities
 
-Run a magento 2 docker-mariadb-elasticsearch envirnment, for development use only.
+Run a magento 2 docker-mariadb-elasticsearch envirnment, for development\testing purposes only.
 
 ### Quick Start
 
